@@ -1,0 +1,9 @@
+train_data_directory = "train_data/ml-20m/"
+ratings_filename = train_data_directory + "ratings.data"
+items_info_filename = train_data_directory + "movies.data"
+user_id_header = "user_id"
+item_id_header = "item_id"
+target_header = "rating"
+delimeter_in_string = "|"
+min_rating = 0.5
+max_rating = 5.0
