@@ -21,7 +21,8 @@ class Recommender:
                                                                            user_id=properties.user_id_header,
                                                                            item_id=properties.item_id_header,
                                                                            target=properties.target_header,
-                                                                           item_data=item_data)
+                                                                           item_data=item_data,
+                                                                           verbose=False)
 
     def recommend(self, user_ratings=None, k=10):
         if not user_ratings:
@@ -31,12 +32,12 @@ class Recommender:
         new_observation_data = graphlab.SFrame({properties.user_id_header: user_ids,
                                                 properties.item_id_header: user_ratings.keys(),
                                                 properties.target_header: user_ratings.values()})
-        print new_observation_data
-        recommendations = list(self.model.recommend(user_id, k=k, new_observation_data=new_observation_data))
-        print recommendations
+        recommendations = list(self.model.recommend(user_id, k=k, new_observation_data=new_observation_data,
+                                                    verbose=False))
+        print properties.item_id_header + "," + properties.target_header
         for recommendation in recommendations:
             print str(recommendation.get(properties.item_id_header)) \
-                  + " " + str(Recommender.__normalize_score(recommendation.get("score")))
+                  + "," + str(Recommender.__normalize_score(recommendation.get("score")))
 
     @staticmethod
     def __load_data(data_path, update_caches=False):
