@@ -1,5 +1,8 @@
+# -*- coding: utf-8 -*-
+
 import os
 
+import MySQLdb
 import graphlab
 
 import properties
@@ -7,21 +10,23 @@ import properties
 
 class Recommender:
     def __init__(self, update_caches=False):
+        self.item_data = None
         cached_model_directory = "cached_model_" + properties.train_data_directory.replace("/", "_")
         if (os.path.exists(cached_model_directory)) and (not update_caches):
             self.model = graphlab.load_model(cached_model_directory)
         else:
             self.train(properties.ratings_filename, properties.items_info_filename, update_caches)
             self.model.save(cached_model_directory)
+            self.create_database()
 
     def train(self, ratings_filename, items_info_filename, update_caches=False):
         observation_data = Recommender.__load_data(ratings_filename, update_caches)
-        item_data = Recommender.__load_data(items_info_filename, update_caches)
+        self.item_data = Recommender.__load_data(items_info_filename, update_caches)
         self.model = graphlab.recommender.factorization_recommender.create(observation_data,
                                                                            user_id=properties.user_id_header,
                                                                            item_id=properties.item_id_header,
                                                                            target=properties.target_header,
-                                                                           item_data=item_data,
+                                                                           item_data=self.item_data,
                                                                            verbose=False)
 
     def recommend(self, user_ratings=None, k=10):
@@ -49,10 +54,43 @@ class Recommender:
             data.save(cached_data_path)
         return data
 
+    def create_database(self):
+        db = MySQLdb.connect(host=properties.db_host,
+                             user=properties.db_user,
+                             passwd=properties.db_passwd)
+        cursor = db.cursor()
+        cursor.execute("CREATE DATABASE IF NOT EXISTS " + properties.db_name +
+                       " CHARACTER SET " + properties.db_charset)
+        cursor.execute("USE " + properties.db_name)
+        cursor.execute("DROP TABLE IF EXISTS " + properties.db_table_name)
+        cursor.execute(
+            "CREATE TABLE " + properties.db_table_name + " (" + properties.item_id_header +
+            " INT PRIMARY KEY NOT NULL, " +
+            properties.db_table_header_title + " VARCHAR(100), " +
+            properties.db_table_header_genre + " VARCHAR(200))")
+
+        insert_sql = "INSERT INTO " + properties.db_table_name + "(" + properties.item_id_header \
+                     + ", " + properties.db_table_header_title + ", " + properties.db_table_header_genre \
+                     + ") VALUES(%s, %s, %s)"
+
+        self.item_data = Recommender.__load_data(properties.items_info_filename)
+        for item in list(self.item_data):
+            item_id = item.get(properties.item_id_header)
+            item_title = item.get(properties.item_title_header)
+            item.pop(properties.item_id_header)
+            item.pop(properties.item_title_header)
+            filtered_dict = {k: v for (k, v) in item.iteritems() if v}
+            genres = (reduce(lambda x, key: x + ", " + key, sorted(filtered_dict), "")).partition(" ")[2]
+            cursor.execute(insert_sql, (item_id, item_title, genres))
+
+        db.commit()
+
     @staticmethod
     def __normalize_score(score):
         return round(min(max(score, properties.min_rating), properties.max_rating), 2)
 
 
 r = Recommender()
-r.recommend(user_ratings={1: 5, 2: 5, 3: 5}, k=20)
+# r.recommend(user_ratings={1: 5, 2: 5, 3: 5}, k=20)
+
+r.create_database()
