@@ -1,19 +1,25 @@
 var content2 = [
     {title: 'Andorra'},
     {title: 'Bahrain'},
-    {title: 'Bahrain1'},
     {title: 'Burundi'}
 ];
 
-for (i = 0; i < 27279; i++) {
-    var cur = 'var ' + i;
-    content2.push({title: cur});
+for (var i = 0; i < movie_titles2.length; i++) {
+    content2.push({title: movie_titles2[i]});
 }
+
+
+/*for (i = 0; i < 27279; i++) {
+    var cur = "" + i;
+    content2.push({title: cur});
+}*/
 
 $(document).ready(function () {
 
     onPageLoad();
     $('ui.loader').loader();
+
+
 });
 
 function onPageLoad() {
@@ -28,8 +34,10 @@ function onPageLoad() {
 function getRating() {
     var currentRating = $('.ui.rating').rating('get rating');
     var selection = $('.ui.dropdown').dropdown('get value');
+    var selection2 = $('.ui.search').search('get value');
     //document.getElementById("button").innerHTML += '<i class="icon"></i>';
-    document.getElementById("status").innerHTML = "rating: " + currentRating + " selected: " + selection;
+    document.getElementById("status").innerHTML = "rating: " + currentRating + " selected: " + selection
+    + "selected2: " + selection2;
     //alert('Current rating is: ' + currentRating);
 }
 
@@ -67,11 +75,11 @@ function onOk() {
 }
 
 
+
 $('.ui.search')
     .search({
         source: content2
     })
 ;
-
 
 

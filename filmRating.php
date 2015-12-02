@@ -5,8 +5,8 @@
         <div class="default text">Select Film</div>
         <div class="menu">
             <?php
-            include 'filmLoader.php';
-            foreach ($_SESSION['movies'] as $item_id => $title) {
+            include("filmLoader.php");
+            foreach ($movies as $item_id => $title) {
                 echo '<div class="item" data-value="' . $item_id . '">' . $title . "</div>\n";
             }
             ?>
@@ -23,3 +23,5 @@
     </div>
     <div class="ui divider"></div>
 </div>
+
+
