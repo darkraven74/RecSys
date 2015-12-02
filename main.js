@@ -4,6 +4,12 @@ var content2 = [
     {title: 'Burundi'}
 ];
 
+var content = [
+    {title: 'G'},
+    {title: 'GG'},
+    {title: 'AAA'}
+];
+
 for (var i = 0; i < movie_titles2.length; i++) {
     content2.push({title: movie_titles2[i]});
 }
@@ -15,11 +21,7 @@ for (var i = 0; i < movie_titles2.length; i++) {
 }*/
 
 $(document).ready(function () {
-
     onPageLoad();
-    $('ui.loader').loader();
-
-
 });
 
 function onPageLoad() {
@@ -29,6 +31,24 @@ function onPageLoad() {
             onRate: getRating
         })
     ;
+    $('.ui.loader').loader();
+    fillSearchField();
+}
+
+function fillSearchField() {
+    $('.ui.search')
+        .search({
+            searchFields: ['title'],
+            source: content2,
+            type: 'standard',
+            searchFullText: false
+        })
+    ;
+
+
+
+
+
 }
 
 function getRating() {
@@ -43,22 +63,6 @@ function getRating() {
 
 
 function foo() {
-    var text = '\
-        <div class="column">\
-        <div>Film 3</div>\
-        <div class="ui star rating">\
-        <i class="icon"></i>\
-        <i class="icon"></i>\
-        <i class="icon"></i>\
-        <i class="icon"></i>\
-        <i class="icon"></i>\
-        </div>\
-        </div>';
-    var newNode = document.createElement('div');
-    newNode.setAttribute("class", "row")
-    newNode.innerHTML = text;
-    //document.getElementById("button").parentNode.insertBefore(newNode, document.getElementById("button"));
-
     $.get('filmRating.php', function (data) {
         var newNode = document.createElement('div');
         newNode.setAttribute("class", "row")
@@ -67,7 +71,12 @@ function foo() {
             document.getElementById("button"));
         onPageLoad();
 
+
+
+
     });
+    onPageLoad();
+
 }
 
 function onOk() {
@@ -78,7 +87,10 @@ function onOk() {
 
 $('.ui.search')
     .search({
-        source: content2
+        searchFields: ['title'],
+        source: content2,
+        type: 'standard',
+        searchFullText: false
     })
 ;
 

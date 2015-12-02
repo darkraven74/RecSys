@@ -1,6 +1,6 @@
 <?php
 echo "included\n";
-//if (!isset($movies)) {
+if (!isset($movie_titles)) {
     echo "db load";
     $config = parse_ini_file("recommender/properties.py");
     $db_host = $config["db_host"];
@@ -23,5 +23,5 @@ echo "included\n";
 //echo json_encode($movie_titles);
     echo '<script>var movie_titles2 = ' . json_encode($movie_titles) . ';</script>';
     $connection->close();
-//}
+}
 ?>
