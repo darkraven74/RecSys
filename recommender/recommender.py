@@ -2,6 +2,7 @@
 
 import os
 import sys
+import time
 
 import MySQLdb
 import graphlab
@@ -22,22 +23,22 @@ class Recommender:
 
     def train(self, ratings_filename, items_info_filename, update_caches=False):
         observation_data = Recommender.__load_data(ratings_filename, update_caches)
+
         self.item_data = Recommender.__load_data(items_info_filename, update_caches)
-        self.model = graphlab.recommender.ranking_factorization_recommender.create(observation_data.head(1000000),
-                                                                                   user_id=properties.user_id_header,
-                                                                                   item_id=properties.item_id_header,
-                                                                                   target=properties.target_header,
-                                                                                   item_data=self.item_data,
-                                                                                   verbose=True,
-                                                                                   max_iterations=10,
-                                                                                   solver='auto')
-
-
+        self.model = graphlab.recommender.factorization_recommender.create(observation_data,
+                                                                           user_id=properties.user_id_header,
+                                                                           item_id=properties.item_id_header,
+                                                                           target=properties.target_header,
+                                                                           item_data=self.item_data,
+                                                                           verbose=True,
+                                                                           max_iterations=10,
+                                                                           solver='sgd')
 
     def recommend(self, user_ratings=None, k=10):
         if not user_ratings:
             user_ratings = {}
-        user_id = [20]
+        rated_items = set(user_ratings.keys())
+        user_id = [int(Recommender.__get_nearest_neighbor(rated_items))]
         user_ids = user_id * len(user_ratings)
         new_observation_data = graphlab.SFrame({properties.user_id_header: user_ids,
                                                 properties.item_id_header: user_ratings.keys(),
@@ -45,8 +46,9 @@ class Recommender:
         recommendations = list(self.model.recommend(user_id, k=k, new_observation_data=new_observation_data,
                                                     verbose=True))
         for recommendation in recommendations:
-            print str(recommendation.get(properties.item_id_header)) \
-                  + "," + str(Recommender.__normalize_score(recommendation.get("score")))
+            item_id = str(recommendation.get(properties.item_id_header))
+            if item_id not in rated_items:
+                print item_id + "," + str(Recommender.__normalize_score(recommendation.get("score")))
 
     @staticmethod
     def __load_data(data_path, update_caches=False):
@@ -57,6 +59,29 @@ class Recommender:
             data = graphlab.SFrame.read_csv(data_path, delimiter=properties.delimeter_in_string)
             data.save(cached_data_path)
         return data
+
+    @staticmethod
+    def __get_nearest_neighbor(user_ratings):
+        start_time = time.time()
+        ratings_subset_file = open(properties.ratings_subset_filename, "r")
+        neighbor_id = -1
+        neighbor_intersection = 0
+        for user in ratings_subset_file:
+            cur_user_ratings = user.split(" ")
+            cur_user_id = cur_user_ratings[0]
+            cur_user_ratings.pop(0)
+            cur_user_ratings.remove('\n')
+            # print user_ratings
+            # print set(cur_user_ratings)
+            intersection = len(user_ratings.intersection(set(cur_user_ratings)))
+            if intersection > neighbor_intersection:
+                neighbor_intersection = intersection
+                neighbor_id = cur_user_id
+                # break
+        # print "uid: " + str(neighbor_id)
+        # print "count: " + str(neighbor_intersection)
+        # print("--- %s seconds ---" % (time.time() - start_time))
+        return neighbor_id
 
     def create_database(self):
         db = MySQLdb.connect(host=properties.db_host,
@@ -99,7 +124,6 @@ if __name__ == '__main__':
     ratings = map(int, sys.argv[2].split(","))
     dict_ratings = dict(zip(film_ids, ratings))
     dict_ratings.pop('', None)
-    # print dict_ratings
     recommender = Recommender(update_caches=False)
-    recommender.recommend(user_ratings=dict_ratings, k=50)
+    recommender.recommend(user_ratings=dict_ratings, k=20)
     # recommender.create_database()
