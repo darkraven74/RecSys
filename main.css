@@ -1,42 +1,42 @@
-*{
+* {
     margin: 3px;
     padding: 0px;
 }
 
-body{
+body {
     font-family: 'Open Sans', sans-serif;
     margin-bottom: 60px;
 }
 
-.ui .column .main{
+.ui .column .main {
     margin-top: 30px;
     padding: 50px;
 }
 
-.ui .column .main h1{
+.ui .column .main h1 {
     font-size: 50px;
 }
 
-.ui .column .main p{
+.ui .column .main p {
     font-size: 20px;
 }
 
-.m-top-20{
+.m-top-20 {
     margin-top: 20px;
 }
 
-.img-thumbnail{
+.img-thumbnail {
     padding: 4px;
     border: 1px solid #ddd;
     background: #fff;
     border-radius: 4px;
 }
 
-.panel{
+.panel {
     font-size: 14px !important;
 }
 
-.panel .header{
+.panel .header {
     margin: 5px 0;
 }
 

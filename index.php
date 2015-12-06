@@ -148,7 +148,7 @@
         <div class="column">
             <button class="ui button" , onclick="addFilm()">Add film</button>
             <button class="ui button" , onclick="getRecommendations()">Get recommendations</button>
-            <div class="ui inline active text loader" , id="loader", style="visibility: hidden;">Loading</div>
+            <div class="ui inline active text loader" , id="loader" , style="visibility: hidden;">Loading</div>
         </div>
     </div>
 
