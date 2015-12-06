@@ -1,3 +1,5 @@
+python_bin = "/home/darkraven/Prog/anaconda2/envs/dato-env/bin/python"
+recommender_dir = "recommender/"
 train_data_directory = "train_data/ml-20m/"
 ratings_filename = train_data_directory + "ratings.data"
 items_info_filename = train_data_directory + "movies.data"

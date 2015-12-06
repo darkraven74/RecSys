@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import sys
 
 import MySQLdb
 import graphlab
@@ -22,24 +23,27 @@ class Recommender:
     def train(self, ratings_filename, items_info_filename, update_caches=False):
         observation_data = Recommender.__load_data(ratings_filename, update_caches)
         self.item_data = Recommender.__load_data(items_info_filename, update_caches)
-        self.model = graphlab.recommender.factorization_recommender.create(observation_data,
-                                                                           user_id=properties.user_id_header,
-                                                                           item_id=properties.item_id_header,
-                                                                           target=properties.target_header,
-                                                                           item_data=self.item_data,
-                                                                           verbose=False)
+        self.model = graphlab.recommender.ranking_factorization_recommender.create(observation_data.head(1000000),
+                                                                                   user_id=properties.user_id_header,
+                                                                                   item_id=properties.item_id_header,
+                                                                                   target=properties.target_header,
+                                                                                   item_data=self.item_data,
+                                                                                   verbose=True,
+                                                                                   max_iterations=10,
+                                                                                   solver='auto')
+
+
 
     def recommend(self, user_ratings=None, k=10):
         if not user_ratings:
             user_ratings = {}
-        user_id = [-1]
+        user_id = [20]
         user_ids = user_id * len(user_ratings)
         new_observation_data = graphlab.SFrame({properties.user_id_header: user_ids,
                                                 properties.item_id_header: user_ratings.keys(),
                                                 properties.target_header: user_ratings.values()})
         recommendations = list(self.model.recommend(user_id, k=k, new_observation_data=new_observation_data,
-                                                    verbose=False))
-        print properties.item_id_header + "," + properties.target_header
+                                                    verbose=True))
         for recommendation in recommendations:
             print str(recommendation.get(properties.item_id_header)) \
                   + "," + str(Recommender.__normalize_score(recommendation.get("score")))
@@ -90,7 +94,12 @@ class Recommender:
         return round(min(max(score, properties.min_rating), properties.max_rating), 2)
 
 
-r = Recommender()
-# r.recommend(user_ratings={1: 5, 2: 5, 3: 5}, k=20)
-
-r.create_database()
+if __name__ == '__main__':
+    film_ids = sys.argv[1].split(",")
+    ratings = map(int, sys.argv[2].split(","))
+    dict_ratings = dict(zip(film_ids, ratings))
+    dict_ratings.pop('', None)
+    # print dict_ratings
+    recommender = Recommender(update_caches=False)
+    recommender.recommend(user_ratings=dict_ratings, k=50)
+    # recommender.create_database()
