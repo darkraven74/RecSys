@@ -1,25 +1,5 @@
-var content2 = [
-    {title: 'Andorra'},
-    {title: 'Bahrain'},
-    {title: 'Burundi'}
-];
-
-for (var i = 0; i < movie_titles2.length; i++) {
-    content2.push({title: movie_titles2[i]});
-}
-
-
-/*for (i = 0; i < 27279; i++) {
-    var cur = "" + i;
-    content2.push({title: cur});
-}*/
-
 $(document).ready(function () {
-
     onPageLoad();
-    $('ui.loader').loader();
-
-
 });
 
 function onPageLoad() {
@@ -29,57 +9,54 @@ function onPageLoad() {
             onRate: getRating
         })
     ;
+    $('ui.loader').loader();
 }
 
 function getRating() {
     var currentRating = $('.ui.rating').rating('get rating');
     var selection = $('.ui.dropdown').dropdown('get value');
-    var selection2 = $('.ui.search').search('get value');
     //document.getElementById("button").innerHTML += '<i class="icon"></i>';
-    document.getElementById("status").innerHTML = "rating: " + currentRating + " selected: " + selection
-    + "selected2: " + selection2;
+    document.getElementById("status").innerHTML = "rating: " + currentRating + " selected: " + selection;
     //alert('Current rating is: ' + currentRating);
 }
 
 
-function foo() {
-    var text = '\
-        <div class="column">\
-        <div>Film 3</div>\
-        <div class="ui star rating">\
-        <i class="icon"></i>\
-        <i class="icon"></i>\
-        <i class="icon"></i>\
-        <i class="icon"></i>\
-        <i class="icon"></i>\
-        </div>\
-        </div>';
-    var newNode = document.createElement('div');
-    newNode.setAttribute("class", "row")
-    newNode.innerHTML = text;
-    //document.getElementById("button").parentNode.insertBefore(newNode, document.getElementById("button"));
-
-    $.get('filmRating.php', function (data) {
+function addFilm() {
+    $.get('filmRatingItem.php', function (data) {
         var newNode = document.createElement('div');
         newNode.setAttribute("class", "row")
         newNode.innerHTML = data;
         document.getElementById("table").insertBefore(newNode,
             document.getElementById("button"));
         onPageLoad();
-
     });
 }
 
-function onOk() {
+function getRecommendations() {
+    getRating();
     document.getElementById("recs").style.visibility = "visible";
+    document.getElementById("loader").style.visibility = "visible";
+    var recs_list_node = document.getElementById("recs_list");
+    while (recs_list_node.firstChild) {
+        recs_list_node.removeChild(recs_list_node.firstChild);
+    }
+    var film_ids_list = $('.ui.dropdown').dropdown('get value');
+    var ratings_list = $('.ui.rating').rating('get rating');
+    $.post("recommendationsMaker.php",
+        {
+            film_ids: film_ids_list.join(),
+            ratings: ratings_list.join()
+        },
+        function (data, status) {
+            document.getElementById("loader").style.visibility = "hidden";
+            var arr = JSON.parse(data);
+            for (var i = 0; i < arr.length; i++) {
+                var newNode = document.createElement('li');
+                newNode.innerHTML = arr[i];
+                document.getElementById("recs_list").appendChild(newNode);
+            }
+            //alert("Data: " + data + "\nStatus: " + status);
+
+        });
 }
-
-
-
-$('.ui.search')
-    .search({
-        source: content2
-    })
-;
-
 

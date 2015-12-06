@@ -1,7 +1,5 @@
 <?php
-echo "included\n";
-//if (!isset($movies)) {
-    echo "db load";
+if (!isset($movies)) {
     $config = parse_ini_file("recommender/properties.py");
     $db_host = $config["db_host"];
     $db_user = $config["db_user"];
@@ -14,14 +12,10 @@ echo "included\n";
     $sql = "SELECT * FROM " . $config["db_table_name"];
     $result = $connection->query($sql);
     $i = 0;
-    $movie_titles = array();
     while ($row = $result->fetch_assoc() and $i < 1000) {
-        $i++;
-        //$movies[$row[$config["item_id_header"]]] = $row[$config["db_table_header_title"]];
-        array_push($movie_titles, $row[$config["db_table_header_title"]]);
+        //$i++;
+        $movies[$row[$config["item_id_header"]]] = $row[$config["db_table_header_title"]];
     }
-//echo json_encode($movie_titles);
-    echo '<script>var movie_titles2 = ' . json_encode($movie_titles) . ';</script>';
     $connection->close();
-//}
+}
 ?>

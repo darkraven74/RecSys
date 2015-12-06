@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Theme</title>
+    <title>Recommender</title>
     <meta name="description" content="">
     <meta name=viewport content="width=device-width, initial-scale=1">
     <meta name="mobile-web-app-capable" content="yes">
@@ -43,15 +43,88 @@
 
     <div class="row">
         <div class="column">
-                <div class="ui search selection dropdown">
+            <div class="ui search selection dropdown">
                 <input type="hidden" name="country">
 
                 <div class="default text">Select Film</div>
                 <div class="menu">
                     <?php
                     include("filmLoader.php");
+                    $i = 0;
                     foreach ($movies as $item_id => $title) {
                         echo '<div class="item" data-value="' . $item_id . '">' . $title . "</div>\n";
+                        $i++;
+                        if ($i > 1000) {
+                            break;
+                        }
+                    }
+                    ?>
+                </div>
+            </div>
+            <br>
+            Rating:
+            <div class="ui star rating">
+                <i class="icon"></i>
+                <i class="icon"></i>
+                <i class="icon"></i>
+                <i class="icon"></i>
+                <i class="icon"></i>
+            </div>
+            <div class="ui divider"></div>
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="column">
+            <div class="ui search selection dropdown">
+                <input type="hidden" name="country">
+
+                <div class="default text">Select Film</div>
+                <div class="menu">
+                    <?php
+                    include("filmLoader.php");
+                    $i = 0;
+                    foreach ($movies as $item_id => $title) {
+                        echo '<div class="item" data-value="' . $item_id . '">' . $title . "</div>\n";
+                        $i++;
+                        if ($i > 1000) {
+                            break;
+                        }
+                    }
+                    ?>
+                </div>
+            </div>
+            <br>
+            Rating:
+            <div class="ui star rating">
+                <i class="icon"></i>
+                <i class="icon"></i>
+                <i class="icon"></i>
+                <i class="icon"></i>
+                <i class="icon"></i>
+            </div>
+            <div class="ui divider"></div>
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="column">
+            <div class="ui search selection dropdown">
+                <input type="hidden" name="country">
+
+                <div class="default text">Select Film</div>
+                <div class="menu">
+                    <?php
+                    include("filmLoader.php");
+                    $i = 0;
+                    foreach ($movies as $item_id => $title) {
+                        echo '<div class="item" data-value="' . $item_id . '">' . $title . "</div>\n";
+                        $i++;
+                        if ($i > 1000) {
+                            break;
+                        }
                     }
                     ?>
                 </div>
@@ -71,24 +144,11 @@
     </div>
 
 
-
-    <div class="row">
-        <div class="column">
-            <div class="ui search">
-                <div class="ui icon input">
-                    <input class="prompt" type="text" placeholder="Search film...">
-                    <i class="search icon"></i>
-                </div>
-                <div class="results"></div>
-            </div>
-        </div>
-    </div>
-
-
     <div class="row" , id="button">
         <div class="column">
-            <button class="ui button" , onclick="foo()">Add film</button>
-            <button class="ui button" , onclick="onOk()">Get recommendations</button>
+            <button class="ui button" , onclick="addFilm()">Add film</button>
+            <button class="ui button" , onclick="getRecommendations()">Get recommendations</button>
+            <div class="ui inline active text loader" , id="loader", style="visibility: hidden;">Loading</div>
         </div>
     </div>
 
@@ -96,16 +156,8 @@
     <div class="row">
         <div class="column" , id="recs" , style="visibility: hidden;">
             <h2 class="ui header">Your recommendations</h2>
-
-            <div class="ui inline active text loader" , id="loader">Loading</div>
-            <ol class="ui list">
-                <li>Signing Up</li>
-                <li>User Benefits</li>
-                <li>User Types</li>
-                <li>Deleting Your Account</li>
+            <ol class="ui list" , id="recs_list">
             </ol>
-
-
         </div>
     </div>
 

@@ -6,8 +6,13 @@
         <div class="menu">
             <?php
             include("filmLoader.php");
+            $i = 0;
             foreach ($movies as $item_id => $title) {
                 echo '<div class="item" data-value="' . $item_id . '">' . $title . "</div>\n";
+                $i++;
+                if ($i > 1000) {
+                    break;
+                }
             }
             ?>
         </div>
