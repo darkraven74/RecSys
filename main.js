@@ -4,27 +4,14 @@ $(document).ready(function () {
 
 function onPageLoad() {
     $('.ui.dropdown').dropdown();
-    $('.ui.rating')
-        .rating({
-            onRate: getRating
-        })
-    ;
+    $('.ui.rating').rating();
     $('ui.loader').loader();
 }
-
-function getRating() {
-    var currentRating = $('.ui.rating').rating('get rating');
-    var selection = $('.ui.dropdown').dropdown('get value');
-    //document.getElementById("button").innerHTML += '<i class="icon"></i>';
-    document.getElementById("status").innerHTML = "rating: " + currentRating + " selected: " + selection;
-    //alert('Current rating is: ' + currentRating);
-}
-
 
 function addFilm() {
     $.get('filmRatingItem.php', function (data) {
         var newNode = document.createElement('div');
-        newNode.setAttribute("class", "row")
+        newNode.setAttribute("class", "row");
         newNode.innerHTML = data;
         document.getElementById("table").insertBefore(newNode,
             document.getElementById("button"));
@@ -33,7 +20,6 @@ function addFilm() {
 }
 
 function getRecommendations() {
-    getRating();
     document.getElementById("recs").style.visibility = "visible";
     document.getElementById("loader").style.visibility = "visible";
     var recs_list_node = document.getElementById("recs_list");
@@ -47,7 +33,7 @@ function getRecommendations() {
             film_ids: film_ids_list.join(),
             ratings: ratings_list.join()
         },
-        function (data, status) {
+        function (data) {
             document.getElementById("loader").style.visibility = "hidden";
             var arr = JSON.parse(data);
             for (var i = 0; i < arr.length; i++) {
@@ -55,8 +41,6 @@ function getRecommendations() {
                 newNode.innerHTML = arr[i];
                 document.getElementById("recs_list").appendChild(newNode);
             }
-            //alert("Data: " + data + "\nStatus: " + status);
-
         });
 }
 

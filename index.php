@@ -14,10 +14,10 @@
     <!-- endbuild -->
     <link href='//fonts.googleapis.com/css?family=Open+Sans:400,700,300&subset=latin,vietnamese' rel='stylesheet'
           type='text/css'>
-
     <!-- build:css styles/main.css -->
     <link rel="stylesheet" href="main.css">
     <!-- endbuild -->
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>
 </head>
 <body>
 
@@ -26,14 +26,11 @@
 </nav> <!-- end nav -->
 
 <main class="ui page grid" , id="table">
-
-
     <div class="row">
         <div class="column">
             <div id="status">status:</div>
         </div>
     </div>
-
 
     <div class="row">
         <div class="column">
@@ -72,7 +69,6 @@
             </div>
             <div class="ui divider"></div>
         </div>
-
     </div>
 
     <div class="row">
@@ -106,7 +102,6 @@
             </div>
             <div class="ui divider"></div>
         </div>
-
     </div>
 
     <div class="row">
@@ -140,7 +135,6 @@
             </div>
             <div class="ui divider"></div>
         </div>
-
     </div>
 
 

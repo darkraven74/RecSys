@@ -11,9 +11,7 @@ if (!isset($movies)) {
     }
     $sql = "SELECT * FROM " . $config["db_table_name"];
     $result = $connection->query($sql);
-    $i = 0;
-    while ($row = $result->fetch_assoc() and $i < 1000) {
-        //$i++;
+    while ($row = $result->fetch_assoc()) {
         $movies[$row[$config["item_id_header"]]] = $row[$config["db_table_header_title"]];
     }
     $connection->close();
