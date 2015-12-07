@@ -2,7 +2,6 @@
 
 import os
 import sys
-import time
 
 import MySQLdb
 import graphlab
@@ -77,7 +76,7 @@ class Recommender:
         # print "count: " + str(neighbor_intersection)
         return neighbor_id
 
-    def create_database(self):
+    def __create_database(self):
         db = MySQLdb.connect(host=properties.db_host,
                              user=properties.db_user,
                              passwd=properties.db_passwd)
