@@ -23,7 +23,6 @@ class Recommender:
 
     def train(self, ratings_filename, items_info_filename, update_caches=False):
         observation_data = Recommender.__load_data(ratings_filename, update_caches)
-
         self.item_data = Recommender.__load_data(items_info_filename, update_caches)
         self.model = graphlab.recommender.factorization_recommender.create(observation_data,
                                                                            user_id=properties.user_id_header,
@@ -62,7 +61,6 @@ class Recommender:
 
     @staticmethod
     def __get_nearest_neighbor(user_ratings):
-        start_time = time.time()
         ratings_subset_file = open(properties.ratings_subset_filename, "r")
         neighbor_id = -1
         neighbor_intersection = 0
@@ -71,16 +69,12 @@ class Recommender:
             cur_user_id = cur_user_ratings[0]
             cur_user_ratings.pop(0)
             cur_user_ratings.remove('\n')
-            # print user_ratings
-            # print set(cur_user_ratings)
             intersection = len(user_ratings.intersection(set(cur_user_ratings)))
             if intersection > neighbor_intersection:
                 neighbor_intersection = intersection
                 neighbor_id = cur_user_id
-                # break
         # print "uid: " + str(neighbor_id)
         # print "count: " + str(neighbor_intersection)
-        # print("--- %s seconds ---" % (time.time() - start_time))
         return neighbor_id
 
     def create_database(self):
@@ -126,4 +120,3 @@ if __name__ == '__main__':
     dict_ratings.pop('', None)
     recommender = Recommender(update_caches=False)
     recommender.recommend(user_ratings=dict_ratings, k=20)
-    # recommender.create_database()
